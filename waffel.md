@@ -1,0 +1,21 @@
+460g finomliszt
+90g melaszos nádcukor
+1 csapott kávéskanál só
+2 vaníliás cukor
+
+180g olvasztott vaj
+
+1,6 dl Tej (3,2-es)
+20g élesztő
+
+2 db tojás
+
+------------------------------------------------------------------
+összekeverés után 1,5 óra kelni, utána mehet a barna cukor:
+
+90g nádcukor (Nagyobb szemű. Kockacukorral helyettesíthető.)
+
+------------------------------------------------------------------
+(+) sütéskor barna cukorral szórni mind két oldalát
+
+kb 10-12-darab
