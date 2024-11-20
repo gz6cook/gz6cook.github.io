@@ -19,19 +19,20 @@ await git.clone({
   fs,
   http,
   dir,
-  corsProxy: 'https://cors.isomorphic-git.org',
+  // corsProxy: 'https://cors.isomorphic-git.org',
   url: 'https://github.com/gz6cook/gz6cook.github.io.git',
   ref: 'main',
   singleBranch: true,
   depth: 2
-});
+}).then(console.log);
+
 await pfs.readdir(dir);
 
 </script>
 
 </head>
 <body>
-    Ver #3<br>
+    Ver #3 - no corsProxy<br>
     <ul>
         <li>
             <a href='recipes/waffel.txt'>Waffel</a>
