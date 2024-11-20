@@ -7,7 +7,7 @@
 <script type="module">
 
 import http from 'https://unpkg.com/isomorphic-git/http/web/index.js'
-window.fs = new LightningFS('fs')
+window.fs = new LightningFS('fs', {wipe: true})
 window.pfs = window.fs.promises
 
 window.dir = '/tutorial'
@@ -20,10 +20,10 @@ await git.clone({
   http,
   dir,
   corsProxy: 'https://cors.isomorphic-git.org',
-  url: 'https://github.com/isomorphic-git/isomorphic-git',
+  url: 'https://github.com/gz6cook/gz6cook.github.io.git',
   ref: 'main',
   singleBranch: true,
-  depth: 10
+  depth: 2
 });
 await pfs.readdir(dir);
 
