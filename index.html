@@ -1,38 +1,58 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <script src="https://unpkg.com/@isomorphic-git/lightning-fs"></script>
-        <script src="https://unpkg.com/isomorphic-git"></script>
-        <script type="module">            
-            import http from 'https://unpkg.com/isomorphic-git@beta/http/web/index.js'
-            const fs = new LightningFS('fs')
-            
-            const dir = '/test-clone'
-            git.clone({ fs, http, dir, url: 'https://github.com/isomorphic-git/lightning-fs', corsProxy: 'https://cors.isomorphic-git.org' }).then(console.log)
-        </script>        
-    </head>
-    <body>
-        <ul>
-            <li>
-                <a href='recipes/waffel.txt'>Waffel</a>
-            </li>
-            <li>
-                <a href='recipes/kuglof.txt'>Kuglóf</a>
-            </li>
-            <li>
-                <a href='recipes/pizza.txt'>Pizza</a>
-            </li>
-            <hr>
-            <li>
-                <a href='recipes/kanadai_palacsinta.txt'>Kanadai palacsinta</a>
-            </li>
-            <li>
-                <a href='recipes/tejberizs.txt'>Tejberizs</a>
-            </li>
-            <hr>
-            <li>
-                <a href='recipes/csevap.txt'>Csevap</a>
-            </li>
-        </ul>
-    </body>
+<head>
+<script src="https://unpkg.com/@isomorphic-git/lightning-fs"></script>
+<script src="https://unpkg.com/isomorphic-git"></script>
+
+<script type="module">
+
+import http from 'https://unpkg.com/isomorphic-git/http/web/index.js'
+window.fs = new LightningFS('fs')
+window.pfs = window.fs.promises
+
+window.dir = '/tutorial'
+console.log(dir);
+await pfs.mkdir(dir);
+await pfs.readdir(dir);
+
+await git.clone({
+  fs,
+  http,
+  dir,
+  corsProxy: 'https://cors.isomorphic-git.org',
+  url: 'https://github.com/isomorphic-git/isomorphic-git',
+  ref: 'main',
+  singleBranch: true,
+  depth: 10
+});
+await pfs.readdir(dir);
+
+</script>
+
+</head>
+<body>
+    Ver #2<br>
+    <ul>
+        <li>
+            <a href='recipes/waffel.txt'>Waffel</a>
+        </li>
+        <li>
+            <a href='recipes/kuglof.txt'>Kuglóf</a>
+        </li>
+        <li>
+            <a href='recipes/pizza.txt'>Pizza</a>
+        </li>
+        <hr>
+        <li>
+            <a href='recipes/kanadai_palacsinta.txt'>Kanadai palacsinta</a>
+        </li>
+        <li>
+            <a href='recipes/tejberizs.txt'>Tejberizs</a>
+        </li>
+        <hr>
+        <li>
+            <a href='recipes/csevap.txt'>Csevap</a>
+        </li>
+    </ul>
+</body>
 </html>
