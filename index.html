@@ -11,7 +11,7 @@ window.fs = new LightningFS('fs', {wipe: true})
 window.pfs = window.fs.promises
 window.dir = '/tutorial'
 
-function pushAll() {
+async function pushAll() {
 
     console.log(dir);
     await pfs.mkdir(dir);
