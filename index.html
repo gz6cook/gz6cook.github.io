@@ -9,49 +9,52 @@
 import http from 'https://unpkg.com/isomorphic-git/http/web/index.js'
 window.fs = new LightningFS('fs', {wipe: true})
 window.pfs = window.fs.promises
-
 window.dir = '/tutorial'
-console.log(dir);
-await pfs.mkdir(dir);
 
-await git.clone({
-    fs,
-    http,
-    dir,
-    corsProxy: 'https://cors.isomorphic-git.org',
-    url: 'https://github.com/gz6cook/gz6cook.github.io.git',
-    // ref: 'main',
-    ref: 'git-notes',
-    singleBranch: true,
-    depth: 1
-}).then(console.log);
+function pushAll() {
 
-await pfs.readdir(dir).then(console.log);
+    console.log(dir);
+    await pfs.mkdir(dir);
 
-await pfs.readFile('/tutorial/test.txt', { encoding: 'utf8' }).then(console.log)
+    await git.clone({
+        fs,
+        http,
+        dir,
+        corsProxy: 'https://cors.isomorphic-git.org',
+        url: 'https://github.com/gz6cook/gz6cook.github.io.git',
+        // ref: 'main',
+        ref: 'git-notes',
+        singleBranch: true,
+        depth: 1
+    }).then(console.log);
 
-await pfs.writeFile(dir + "/test.txt", '' + Date.now())
+    await pfs.readdir(dir).then(console.log);
 
-await pfs.readFile('/tutorial/test.txt', { encoding: 'utf8' }).then(console.log)
+    await pfs.readFile('/tutorial/test.txt', { encoding: 'utf8' }).then(console.log)
 
-await git.commit({
-    fs,
-    dir: '/tutorial',
-    author: {
-        name: 'gz6cook',
-        email: 'gz6cook@gmail.com',
-    },
-    message: 'test update'
-}).then(console.log)
+    await pfs.writeFile(dir + "/test.txt", '' + Date.now())
 
-await git.push({
-    fs,
-    http,
-    dir: '/tutorial',
-    remote: 'origin',
-    ref: 'git-notes',
-    onAuth: () => ({ username: document.getElementById("github_token").value }),
-}).then(console.log())
+    await pfs.readFile('/tutorial/test.txt', { encoding: 'utf8' }).then(console.log)
+
+    await git.commit({
+        fs,
+        dir: '/tutorial',
+        author: {
+            name: 'gz6cook',
+            email: 'gz6cook@gmail.com',
+        },
+        message: 'test update'
+    }).then(console.log)
+
+    await git.push({
+        fs,
+        http,
+        dir: '/tutorial',
+        remote: 'origin',
+        ref: 'git-notes',
+        onAuth: () => ({ username: document.getElementById("github_token").value }),
+    }).then(console.log())
+}
 
 </script>
 
@@ -59,7 +62,8 @@ await git.push({
 <body>
     Ver #4<br>
 
-    <input type="text" id="github_token" name="github_token" />
+    github_token: <input type="text" id="github_token" name="github_token" />
+    <button onclick="pushAll()">Push</button>
 
     <ul>
         <li>
