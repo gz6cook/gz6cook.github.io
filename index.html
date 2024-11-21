@@ -21,26 +21,9 @@
     github_token: <input type="text" id="github_token" name="github_token" />
     <br><button onclick="pushAll()">Push</button>
 
-    <ul>
-        <!-- li>
-            <a href='files/waffel.txt'>Waffel</a>
-        </li>
-        <li>
-            <a href='files/kuglof.txt'>Kuglóf</a>
-        </li>
-        <li>
-            <a href='files/pizza.txt'>Pizza</a>
-        </li>
-        <li>
-            <a href='files/kanadai_palacsinta.txt'>Kanadai palacsinta</a>
-        </li>
-        <li>
-            <a href='files/tejberizs.txt'>Tejberizs</a>
-        </li>
-        <li>
-            <a href='files/csevap.txt'>Csevap</a>
-        </li -->
-    </ul>
+    <ul id="file_list" name="file_list">&nbsp;</ul>
+
+    <br><button onclick="editTest()">edit test.txt</button>
 </body>
 
 <script>
@@ -57,15 +40,30 @@ async function init() {
         depth: 1
     }).then(console.log)
 
-    files = await pfs.readdir(dir + '/files').then(console.log)
+    files = await pfs.readdir(dir + '/files')
+
+    files.forEach(pageAppend);
+}
+
+async function pageAppend(value, index, array) {
+    // console.log(value)
+
+    let status = await git.status({ fs, dir: '/tutorial', filepath: 'files/' + value })
+
+    var file_list = document.getElementById('file_list');
+    var entry = document.createElement('li');
+    entry.appendChild(document.createTextNode(value + ", " + status));
+    file_list.appendChild(entry);
+}    
+
+async function editTest() {
+    // await pfs.readFile(dir + '/files/test.txt', { encoding: 'utf8' }).then(console.log)    
+    await pfs.writeFile(dir + '/files/test.txt', '' + Date.now())    
+    await pfs.readFile(dir + '/files/test.txt', { encoding: 'utf8' }).then(console.log)    
+    await git.add({fs, dir, filepath: 'files/test.txt'})
 }
 
 async function pushAll() {
-
-    await pfs.readFile(dir + '/test.txt', { encoding: 'utf8' }).then(console.log)    
-    await pfs.writeFile(dir + '/test.txt', '' + Date.now())    
-    await pfs.readFile(dir + '/test.txt', { encoding: 'utf8' }).then(console.log)    
-    await git.add({fs, dir, filepath: 'test.txt'})
 
     await git.commit({
         fs,
