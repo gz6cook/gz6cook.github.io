@@ -3,6 +3,10 @@
 <head>
 <script src="https://unpkg.com/@isomorphic-git/lightning-fs"></script>
 <script src="https://unpkg.com/isomorphic-git"></script>
+<script type="module">
+    import http from 'https://unpkg.com/isomorphic-git/http/web/index.js'
+    window.http = http
+</script>
 
 </head>
 <body>
@@ -40,8 +44,8 @@
     async function pushAll() {
     
         // import http from 'https://unpkg.com/isomorphic-git/http/web/index.js'
-        await import('https://unpkg.com/isomorphic-git/http/web/index.js').then(m => window.http = m)
-    
+        // await import('https://unpkg.com/isomorphic-git/http/web/index.js').then(m => window.http = m)
+
         window.fs = new LightningFS('fs', {wipe: true})
         window.pfs = window.fs.promises
         window.dir = '/tutorial'
@@ -70,12 +74,13 @@
     
         await pfs.readFile('/tutorial/test.txt', { encoding: 'utf8' }).then(console.log)
     
+        await git.add({fs, dir, filepath: 'test.txt'})
+
         await git.commit({
             fs,
             dir: '/tutorial',
             author: {
                 name: 'gz6cook',
-                email: 'gz6cook@gmail.com',
             },
             message: 'test update'
         }).then(console.log)
@@ -86,7 +91,12 @@
             dir: '/tutorial',
             remote: 'origin',
             ref: 'git-notes',
-            onAuth: () => ({ username: document.getElementById("github_token").value }),
+            onAuth: () => (
+                // GitHub: use token as username: 
+                { 
+                    username: document.getElementById("github_token").value
+                }
+            ),
         }).then(console.log())
     }
     
