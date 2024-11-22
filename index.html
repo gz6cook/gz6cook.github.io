@@ -74,7 +74,18 @@ async function init() {
             singleBranch: true,
             depth: 1
         })
+
+        // let confs = await getConfigAll({
+        //     fs,
+        //     dir: window.dir,
+        //     path: ""
+        // })
+        // console.log(confs)
+
+
     }
+
+    await pfs.readFile(dir + '/.git/config', { encoding: 'utf8' }).then(console.log)
 
     console.log("fetch")
     
@@ -92,6 +103,7 @@ async function init() {
     await git.checkout({
         fs,
         dir: window.dir,
+        noUpdateHead: true,
         force: true
     })
 
