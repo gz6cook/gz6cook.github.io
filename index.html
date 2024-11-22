@@ -58,18 +58,6 @@ async function init() {
 
     try {
         let dir_stat = await pfs.stat(dir);
-
-        console.log("pull")
-        
-        await git.pull({
-            fs,
-            dir: window.dir,
-            ref: git_ref,
-            noUpdateHead: true,
-            force: true
-        })
-        await refreshList()
-
     } catch (err) {
         
         console.log("clone")
@@ -86,8 +74,31 @@ async function init() {
             singleBranch: true,
             depth: 1
         })
-        await refreshList()
     }
+
+    console.log("fetch")
+    
+    await git.fetch({
+        fs,
+        http,
+        dir: window.dir,
+        corsProxy: 'https://cors.isomorphic-git.org',
+        url: 'https://github.com/gz6cook/gz6cook.github.io.git',
+        ref: git_ref,
+        singleBranch: true,
+        depth: 1,
+        tags: false,
+        prune: true
+    })
+
+    console.log("checkout")
+    await git.checkout({
+        fs,
+        dir: window.dir,
+        force: true
+    })
+
+    await refreshList()
 }
 
 async function refreshList()
