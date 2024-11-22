@@ -1,46 +1,104 @@
 <!DOCTYPE html>
 <html>
 <head>
+
+<style>
+    ul li {
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    ul li span {
+        display: inline-block;
+    }
+    
+    ul li .text {
+        text-align: left;
+    }
+    
+    ul li .right-aligned {
+        text-align: right;
+    }
+    </style>
+
 <script src="https://unpkg.com/@isomorphic-git/lightning-fs"></script>
 <script src="https://unpkg.com/isomorphic-git"></script>
 <script type="module">
     import http from 'https://unpkg.com/isomorphic-git/http/web/index.js'
     window.http = http
 
-    window.fs = new LightningFS('fs', {wipe: true})
+    window.fs = new LightningFS('fs' /* , {wipe: true} */ )
     window.pfs = window.fs.promises
-    window.dir = '/tutorial'
 
     window.git_ref = "git-notes" // "main"
 
-    await pfs.mkdir(dir);
-</script>
+    window.dir = '/tutorial';
+    window.author = {
+        name: 'gz6cook',
+    }
+ </script>
 
 </head>
 <body onload="init()">
-    github_token: <input type="text" id="github_token" name="github_token" />
-    <br><button onclick="pushAll()">Push</button>
-
     <ul id="file_list" name="file_list">&nbsp;</ul>
 
-    <br><button onclick="editTest()">edit test.txt</button>
+    <button onclick="editTest()">edit test.txt</button>
+    <br>
+    <br>
+    
+    <button onclick="pushAll()">push</button>
+    token: <input type="text" id="github_token" name="github_token" /> 
+    
+
 </body>
 
 <script>
 
 async function init() {
-    await git.clone({
-        fs,
-        http,
-        dir,
-        corsProxy: 'https://cors.isomorphic-git.org',
-        url: 'https://github.com/gz6cook/gz6cook.github.io.git',
-        ref: git_ref,
-        singleBranch: true,
-        depth: 1
-    }).then(console.log)
 
+    try {
+        let dir_stat = await pfs.stat(dir);
+
+        console.log("pull")
+        
+        await git.pull({
+            fs,
+            dir: window.dir,
+            ref: git_ref,
+            noUpdateHead: true,
+            force: true
+        })
+        await refreshList()
+
+    } catch (err) {
+        
+        console.log("clone")
+        
+        await pfs.mkdir(dir);
+
+        await git.clone({
+            fs,
+            http,
+            dir,
+            corsProxy: 'https://cors.isomorphic-git.org',
+            url: 'https://github.com/gz6cook/gz6cook.github.io.git',
+            ref: git_ref,
+            singleBranch: true,
+            depth: 1
+        })
+        await refreshList()
+    }
+}
+
+async function refreshList()
+{
     files = await pfs.readdir(dir + '/files')
+    
+    // clear list:
+    var file_list = document.getElementById('file_list');
+    while (file_list.firstChild) {
+        file_list.removeChild(file_list.firstChild);
+    }
 
     files.forEach(pageAppend);
 }
@@ -51,16 +109,28 @@ async function pageAppend(value, index, array) {
     let status = await git.status({ fs, dir: '/tutorial', filepath: 'files/' + value })
 
     var file_list = document.getElementById('file_list');
+    
     var entry = document.createElement('li');
-    entry.appendChild(document.createTextNode(value + ", " + status));
+    
+    var entry_text = document.createElement('span');
+    entry_text.appendChild(document.createTextNode(value));
+    entry_text.setAttribute('class', 'text')
+    entry.appendChild(entry_text);
+
+    var entry_status = document.createElement('span');
+    entry_status.appendChild(document.createTextNode(status));
+    entry_status.setAttribute('class', 'right-aligned')
+    entry.appendChild(entry_status);
+
     file_list.appendChild(entry);
 }    
 
 async function editTest() {
-    // await pfs.readFile(dir + '/files/test.txt', { encoding: 'utf8' }).then(console.log)    
+    await pfs.readFile(dir + '/files/test.txt', { encoding: 'utf8' }).then(console.log)    
     await pfs.writeFile(dir + '/files/test.txt', '' + Date.now())    
     await pfs.readFile(dir + '/files/test.txt', { encoding: 'utf8' }).then(console.log)    
     await git.add({fs, dir, filepath: 'files/test.txt'})
+    await refreshList()
 }
 
 async function pushAll() {
@@ -68,10 +138,8 @@ async function pushAll() {
     await git.commit({
         fs,
         dir: window.dir,
-        author: {
-            name: 'gz6cook',
-        },
-        message: 'test update'
+        author: window.author,
+        message: 'update'
     }).then(console.log)
 
     await git.push({
@@ -86,7 +154,9 @@ async function pushAll() {
                 username: document.getElementById("github_token").value
             }
         ),
-    }).then(console.log())
+    }).then(console.log)
+
+    await refreshList()
 }
 
 </script>    
