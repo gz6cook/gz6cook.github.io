@@ -86,16 +86,8 @@ async function init() {
     await pfs.readFile(dir + '/.git/config', { encoding: 'utf8' }).then(console.log)
     await pfs.readFile(dir + '/files/test.txt', { encoding: 'utf8' }).then(console.log)
 
-    console.log("merge")
-    await git.merge({
-        fs,
-        dir: window.dir,
-        // ours: 'window.git_ref',
-        theirs: 'remotes/origin/' + window.git_ref,
-        author: window.author
-    })
-
     console.log("fetch")
+    
     await git.fetch({
         fs,
         http,
@@ -114,22 +106,14 @@ async function init() {
         filepaths: ['files']
     })
 
-    // await git.merge({
-    //     fs,
-    //     dir,
-    //     author: window.author
-        // ours: 'main',
-        // theirs: 'feature',
-    //     abortOnConflict: false,
-    // }).catch(e => {
-    //     if (e instanceof Errors.MergeConflictError) {
-    //         console.log(
-    //             'Automatic merge failed for the following files: '
-    //             + `${e.data}. `
-    //             + 'Resolve these conflicts and then commit your changes.'
-    //         )
-    //     } else throw e
-    // })
+    console.log("merge")
+    await git.merge({
+        fs,
+        dir: window.dir,
+        // ours: 'window.git_ref',
+        theirs: 'remotes/origin/' + window.git_ref,
+        author: window.author
+    })
 
     await pfs.readFile(dir + '/files/test.txt', { encoding: 'utf8' }).then(console.log)
 
