@@ -86,8 +86,16 @@ async function init() {
     await pfs.readFile(dir + '/.git/config', { encoding: 'utf8' }).then(console.log)
     await pfs.readFile(dir + '/files/test.txt', { encoding: 'utf8' }).then(console.log)
 
+    console.log("merge")
+    await git.merge({
+        fs,
+        dir: window.dir,
+        // ours: 'window.git_ref',
+        theirs: 'remotes/origin/' + window.git_ref,
+        author: window.author
+    })
+
     console.log("fetch")
-    
     await git.fetch({
         fs,
         http,
@@ -122,15 +130,6 @@ async function init() {
     //         )
     //     } else throw e
     // })
-    
-    let m = await git.merge({
-        fs,
-        dir: window.dir,
-        // ours: 'main',
-        theirs: 'remotes/origin/' + window.git_ref,
-        author: window.author
-    })
-    console.log(m)
 
     await pfs.readFile(dir + '/files/test.txt', { encoding: 'utf8' }).then(console.log)
 
