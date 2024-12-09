@@ -27,6 +27,12 @@
         }
      </script>
 
+    <style>
+        #fileTextEdit {
+            height: calc(75vh);
+        }
+    </style>
+
   </head>
   <body onload="init()">
 
@@ -38,7 +44,7 @@
             </a-->
     
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-              <li><a href="#" class="nav-link px-2 link-secondary">Home</a></li>
+              <li><a href="/" class="nav-link px-2 link-secondary">Home</a></li>
               <!-- li><a href="#" class="nav-link px-2 link-body-emphasis">Inventory</a></li -->
             </ul>
     
@@ -50,8 +56,9 @@
         </div>
     </header>
     
-    <div class="container">
-        <div class="list-group" id="file_list" name="file_list"></div>
+    <div class="container-fluid">
+        <label id="fileTextEditLabel" for="fileTextEdit">...</label>
+        <textarea class="form-control" id="fileTextEdit" rows="12">...</textarea>
     </div>
 
     <!--
@@ -74,120 +81,15 @@
 
     async function init() {
     
-        try {
-            let dir_stat = await pfs.stat(dir);
-        } catch (err) {
-            
-            console.log("clone")
-            
-            await pfs.mkdir(dir);
-    
-            await git.clone({
-                fs,
-                http,
-                dir,
-                corsProxy: 'https://cors.isomorphic-git.org',
-                url: 'https://github.com/gz6cook/gz6cook.github.io.git',
-                ref: git_ref,
-                singleBranch: true,
-                depth: 1
-            })
-        }
-    
-        let confs = await git.getConfigAll({
-            fs,
-            dir: window.dir,
-            path: "remote.origin.fetch"
-        })
-        console.log('remote.origin.fetch: ' + confs)
-    
-        await pfs.readFile(dir + '/.git/config', { encoding: 'utf8' }).then(console.log)
-        await pfs.readFile(dir + '/files/test.txt', { encoding: 'utf8' }).then(console.log)
-    
-        console.log("fetch")
-        
-        await git.fetch({
-            fs,
-            http,
-            dir: window.dir,
-            corsProxy: 'https://cors.isomorphic-git.org',
-            url: 'https://github.com/gz6cook/gz6cook.github.io.git',
-            ref: window.git_ref,
-            prune: true
-        })
-    
-        console.log("checkout")
-        await git.checkout({
-            fs,
-            dir: window.dir,
-            force: true,
-            filepaths: ['files']
-        })
-    
-        console.log("merge")
-        await git.merge({
-            fs,
-            dir: window.dir,
-            // ours: 'window.git_ref',
-            theirs: 'remotes/origin/' + window.git_ref,
-            author: window.author
-        })
-    
-        await pfs.readFile(dir + '/files/test.txt', { encoding: 'utf8' }).then(console.log)
-    
-        await refreshList()
-    }
-    
-    async function refreshList()
-    {
-        files = await pfs.readdir(dir + '/files')
-        
-        // clear list:
-        var file_list = document.getElementById('file_list');
-        while (file_list.firstChild) {
-            file_list.removeChild(file_list.firstChild);
-        }
-    
-        files.forEach(pageAppend);
-    }
-    
-    async function pageAppend(value, index, array) {
-        // console.log(value)
-    
-        let status = await git.status({ fs, dir: '/tutorial', filepath: 'files/' + value })
-    
-        // var file_list = document.getElementById('file_list');
-        
-        // var entry = document.createElement('a');
-        
-        // entry.appendChild(document.createTextNode(value));
-        // entry.setAttribute('href', '#')
-        // entry.setAttribute('class', 'list-group-item list-group-item-action')
-    
-        // var entry_status = document.createElement('span');
-        // entry_status.appendChild(document.createTextNode(status));
-        // entry_status.setAttribute('class', 'badge text-bg-primary rounded-pill')
-        // entry.appendChild(entry_status);
-    
-        // file_list.appendChild(entry);
+        let searchParams = new URLSearchParams(window.location.search)
+        let fname = searchParams.get('f')
 
-        $('#file_list').append($('<a>')
-            .attr("href", "edit.html?f=" + encodeURIComponent(value))
-            .addClass("list-group-item")
-            .addClass("list-group-item-action")
-            .append($("<div class='d-flex w-100 justify-content-between'>")
-                .append($("<h5 class='mb-1'>")
-                    .text(value)
-                )
-                .append($("<small>")
-                    .text(status)
-                )
-            )
-            // .append($('<p class="mb-1">Some placeholder content in a paragraph.</p>'))
-            // .append($('<small>And some small print.</small>'))
-        )
-    }
+        let txt = await pfs.readFile(dir + '/files/' + fname, { encoding: 'utf8' })
+        $("#fileTextEditLabel").text(fname)
+        $("#fileTextEdit").text(txt)
 
+    }
+    
     async function editTest() {
         await pfs.readFile(dir + '/files/test.txt', { encoding: 'utf8' }).then(console.log)    
         await pfs.writeFile(dir + '/files/test.txt', '' + Date.now())    
