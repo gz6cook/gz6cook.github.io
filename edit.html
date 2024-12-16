@@ -33,6 +33,10 @@
         }
     </style>
 
+    <script src="./js/NoSleep.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+
   </head>
   <body onload="init()">
 
@@ -43,15 +47,13 @@
               <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>
             </a-->
     
-            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+            <ul class="nav col-10 col-lg-auto me-lg-auto mb-2 justify-content-left mb-md-0">
               <li><a href="/" class="nav-link px-2 link-secondary">Home</a></li>
               <!-- li><a href="#" class="nav-link px-2 link-body-emphasis">Inventory</a></li -->
             </ul>
     
-            <!-- form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-              <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
-            </form -->
-    
+            <input type="button" class="nav col-2 col-lg-auto me-lg-auto mb-2 justify-content-right mb-md-0" id="toggle" value="lock" />
+
           </div>
         </div>
     </header>
@@ -76,6 +78,24 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.2.1/dist/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 
   </body>
+
+  <script>
+    var noSleep = new NoSleep();
+
+    var wakeLockEnabled = false;
+    var toggleEl = document.querySelector("#toggle");
+    toggleEl.addEventListener('click', function() {
+      if (!wakeLockEnabled) {
+        noSleep.enable(); // keep the screen on!
+        wakeLockEnabled = true;
+        toggleEl.value = "unlock";
+      } else {
+        noSleep.disable(); // let the screen turn off.
+        wakeLockEnabled = false;
+        toggleEl.value = "lock";
+      }
+    }, false);
+  </script>
 
   <script>
 
