@@ -81,20 +81,17 @@
 
   <script>
     var noSleep = new NoSleep();
-
-    var wakeLockEnabled = false;
-    var toggleEl = document.querySelector("#toggle");
-    toggleEl.addEventListener('click', function() {
+    var wakeLockEnabled = false;   
+    $("#toggle").on('change', function() {
       if (!wakeLockEnabled) {
         noSleep.enable(); // keep the screen on!
         wakeLockEnabled = true;
-        toggleEl.value = "unlock";
       } else {
         noSleep.disable(); // let the screen turn off.
         wakeLockEnabled = false;
-        toggleEl.value = "lock";
       }
-    }, false);
+    });
+
   </script>
 
   <script>
